@@ -2,5 +2,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>IT3105</groupId>
   <artifactId>RL-for-Peg-Solitaire</artifactId>
-  <version>1</version>
+    <packaging>pom</packaging>
+    <version>1</version>
+    <modules>
+      <module>Peg-Solitaire</module>
+      <module>RL-Agent</module>
+    </modules>
 </project>
