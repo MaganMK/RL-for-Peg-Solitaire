@@ -4,3 +4,4 @@
 
 
 <Pane fx:id="paneBoard" prefHeight="356.0" prefWidth="316.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.BoardController" />
+

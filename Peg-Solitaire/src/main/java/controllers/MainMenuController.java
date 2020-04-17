@@ -31,7 +31,17 @@ public class MainMenuController {
     @FXML
     VBox holesBox;
     @FXML
+    VBox toBox;
+    @FXML
+    VBox fromBox;
+    @FXML
     Pane boardPaneOuter;
+    @FXML
+    ToggleGroup fromMove;
+    @FXML
+    ToggleGroup toMove;
+    @FXML
+    Button makeMove;
 
     Pane board;
 
@@ -54,13 +64,27 @@ public class MainMenuController {
     public void spinnerChange() {
         int newValue = sizeSpinner.getValue();
         holesBox.getChildren().clear();
+        fromBox.getChildren().clear();
+        toBox.getChildren().clear();
         this.size = newValue;
         int totalCells = gameType == GameType.DIAMOND ? size*size : (size*size + size) / 2;
         for (int i = 0; i<totalCells; i++){
+            String name = Board.NAMES.get(i);
+
             CheckBox btn = new CheckBox();
-            btn.setText(Board.NAMES.get(i));
+            btn.setText(name);
             btn.setOnAction((ActionEvent e) -> checkboxClick());
             holesBox.getChildren().add(btn);
+
+            RadioButton fromRadio = new RadioButton();
+            fromRadio.setToggleGroup(fromMove);
+            fromRadio.setText(name);
+            fromBox.getChildren().add(fromRadio);
+
+            RadioButton toRadio = new RadioButton();
+            toRadio.setToggleGroup(toMove);
+            toRadio.setText(name);
+            toBox.getChildren().add(toRadio);
         }
 
         checkboxClick();
@@ -95,6 +119,12 @@ public class MainMenuController {
         } catch (Exception e){
             e.printStackTrace();
         }
+    }
 
+    @FXML
+    public void makeMove() {
+        String fromMoveToggle = ((RadioButton) fromMove.getSelectedToggle()).getText();
+        String toMoveToggle= ((RadioButton) toMove.getSelectedToggle()).getText();
+        boardController.makeMove(fromMoveToggle, toMoveToggle);
     }
 }

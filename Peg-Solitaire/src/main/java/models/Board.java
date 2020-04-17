@@ -2,10 +2,8 @@ package models;
 
 import helpers.GameType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Board {
 
@@ -20,7 +18,6 @@ public class Board {
         this.gameType = gameType;
         this.size = size;
         initBoard();
-        System.out.println(cells.get("100 100").getNeighbours());
     }
 
     private void initBoard() {
@@ -59,6 +56,12 @@ public class Board {
         }
     }
 
+    public void updateHoles(List<String> holes){
+        for (String hole : holes) {
+            getCellFromName(hole).setPeg(false);
+        }
+    }
+
     private void link(String originalPos, int x, int y) {
         String neighbourPos = x + " " + y;
         if (cells.get(neighbourPos) != null){
@@ -66,6 +69,67 @@ public class Board {
         }
     }
 
+    private Cell getCellFromName(String name) {
+        Cell res = null;
+        for (Cell cell : cells.values()){
+            if(name.equals(cell.getName())) {
+                res = cell;
+            }
+        }
+        return res;
+    }
+
+    private Set<Cell> intersectingNeighbours(Cell cellOne, Cell cellTwo) {
+        Set<Cell> fromNeighbours = new HashSet<>(cellOne.getNeighbours());
+        Set<Cell> toNeighbours = new HashSet<>(cellTwo.getNeighbours());
+        fromNeighbours.retainAll(toNeighbours);
+        return fromNeighbours;
+    }
+
+    private boolean isNeighbours(Cell cellOne, Cell cellTwo) {
+        return cellOne.getNeighbours().contains(cellTwo);
+    }
+
     public HashMap<String, Cell> getCells() { return cells; }
+
+    public boolean isFinished() {
+        for (Cell from : cells.values()) {
+            for (Cell to : cells.values()) {
+                if (isLegalMove(from, to)){
+                    return false;
+                }
+            }
+        }
+        return cells.values().stream().filter(c -> !c.hasPeg()).count() >= 1;
+    }
+
+    public boolean isWon() {
+        return isFinished() && cells.values().stream().filter(Cell::hasPeg).count() == 1;
+    }
+
+    public boolean makeMove(String from, String to) {
+        Cell fromCell = getCellFromName(from);
+        Cell toCell = getCellFromName(to);
+
+        if (! isLegalMove(fromCell, toCell)){
+            return false;
+        }
+        else {
+            fromCell.setPeg(false);
+            toCell.setPeg(true);
+            Cell intersection = intersectingNeighbours(fromCell, toCell).iterator().next();
+            intersection.setPeg(false);
+            return true;
+        }
+    }
+
+    private boolean isLegalMove(Cell from, Cell to) {
+        Set<Cell> intersection = intersectingNeighbours(from, to);
+        if (intersection.size() == 1 && !isNeighbours(from, to) && from.hasPeg() && !to.hasPeg())
+        {
+            return intersection.iterator().next().hasPeg();
+        }
+        return false;
+    }
 
 }

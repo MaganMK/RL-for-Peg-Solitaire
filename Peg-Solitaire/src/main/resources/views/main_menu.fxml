@@ -14,7 +14,7 @@
 
 <AnchorPane fx:id="mainMenu" prefHeight="569.0" prefWidth="768.0" style="-fx-background-color: white;" visible="true" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainMenuController">
     <children>
-        <Button id="button" fx:id="button" layoutX="101.0" layoutY="425.0" prefHeight="44.0" prefWidth="159.0" text="Run" textAlignment="CENTER" />
+        <Button id="button" fx:id="makeMove" layoutX="224.0" layoutY="144.0" onMouseClicked="#makeMove" prefHeight="44.0" prefWidth="64.0" text="Run" textAlignment="CENTER" />
         <Label id="label" fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" prefHeight="16" prefWidth="69" />
       <Text layoutX="88.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Diamond" wrappingWidth="92.22900390625">
          <font>
@@ -54,7 +54,7 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <VBox fx:id="holesBox1" layoutX="169.0" layoutY="225.0" prefHeight="191.0" prefWidth="46.0">
+      <VBox fx:id="fromBox" layoutX="169.0" layoutY="225.0" prefHeight="191.0" prefWidth="46.0">
          <children>
             <RadioButton mnemonicParsing="false" text="A">
                <toggleGroup>
@@ -63,7 +63,7 @@
             </RadioButton>
          </children>
       </VBox>
-      <VBox fx:id="holesBox11" layoutX="210.0" layoutY="225.0" prefHeight="191.0" prefWidth="46.0">
+      <VBox fx:id="toBox" layoutX="210.0" layoutY="225.0" prefHeight="191.0" prefWidth="46.0">
          <children>
             <RadioButton mnemonicParsing="false" text="A">
                <toggleGroup>
