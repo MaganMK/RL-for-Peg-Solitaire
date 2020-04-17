@@ -43,4 +43,8 @@ public class Cell {
     public String toString(){
         return "Position: " + position.toString();
     }
+
+    public void setPeg(boolean value) {
+        hasPeg = value;
+    }
 }

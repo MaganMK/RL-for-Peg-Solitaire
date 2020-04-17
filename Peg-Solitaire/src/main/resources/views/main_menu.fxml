@@ -26,12 +26,12 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <RadioButton layoutX="169.0" layoutY="78.0" mnemonicParsing="false" onAction="#handleStart" text="diamond">
+      <RadioButton layoutX="169.0" layoutY="78.0" mnemonicParsing="false" onAction="#handleGameTypeToggle" text="diamond">
          <toggleGroup>
             <ToggleGroup fx:id="diamond_or_triangle" />
          </toggleGroup>
       </RadioButton>
-      <RadioButton layoutX="169.0" layoutY="105.0" mnemonicParsing="false" onAction="#handleStart" text="triangle" toggleGroup="$diamond_or_triangle" />
+      <RadioButton layoutX="169.0" layoutY="105.0" mnemonicParsing="false" onAction="#handleGameTypeToggle" text="triangle" toggleGroup="$diamond_or_triangle" />
       <Text layoutX="88.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Size" wrappingWidth="45.9921875">
          <font>
             <Font size="18.0" />
@@ -43,11 +43,34 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <VBox fx:id="holesBox" layoutX="88.0" layoutY="225.0" prefHeight="191.0" prefWidth="100.0">
+      <VBox fx:id="holesBox" layoutX="88.0" layoutY="225.0" prefHeight="191.0" prefWidth="46.0">
          <children>
             <CheckBox mnemonicParsing="false" text="A" />
          </children>
       </VBox>
       <Pane fx:id="boardPaneOuter" layoutX="384.0" layoutY="77.0" prefHeight="321.0" prefWidth="310.0" />
+      <Text layoutX="182.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Move" wrappingWidth="45.9921875">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Text>
+      <VBox fx:id="holesBox1" layoutX="169.0" layoutY="225.0" prefHeight="191.0" prefWidth="46.0">
+         <children>
+            <RadioButton mnemonicParsing="false" text="A">
+               <toggleGroup>
+                  <ToggleGroup fx:id="fromMove" />
+               </toggleGroup>
+            </RadioButton>
+         </children>
+      </VBox>
+      <VBox fx:id="holesBox11" layoutX="210.0" layoutY="225.0" prefHeight="191.0" prefWidth="46.0">
+         <children>
+            <RadioButton mnemonicParsing="false" text="A">
+               <toggleGroup>
+                  <ToggleGroup fx:id="toMove" />
+               </toggleGroup>
+            </RadioButton>
+         </children>
+      </VBox>
     </children>
 </AnchorPane>

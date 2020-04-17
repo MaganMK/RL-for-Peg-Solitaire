@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Board {
 
-    public static final List<String> NAMES = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"));
+    public static final List<String> NAMES = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"));
     private int posOffset = 100;
     private int posInterval = 50;
     private HashMap<String, Cell> cells;
@@ -25,13 +25,15 @@ public class Board {
 
     private void initBoard() {
         HashMap<String, Cell> result = new HashMap<>();
+        int nameCounter = 0;
         for (int i = 0; i<size; i++) {
             int rowSize = gameType == GameType.DIAMOND ? size : i+1;
             for (int j=0; j<rowSize; j++) {
                 int x = posInterval*j+posOffset;
                 int y = posInterval*i+posOffset;
-                Cell cell = new Cell(true, x, y, NAMES.get(i+j));
+                Cell cell = new Cell(true, x, y, NAMES.get(nameCounter));
                 result.put(x + " " + y, cell);
+                nameCounter += 1;
             }
         }
         this.cells = result;
