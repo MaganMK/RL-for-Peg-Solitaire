@@ -80,13 +80,15 @@ public class BoardController {
         }
 
         if(board.isFinished()) {
+            StackPane stack = new StackPane();
             Text endText = new Text();
+            stack.getChildren().add(endText);
             if (board.isWon()) {
                 endText.setText("Finished! Congratulation, you won.");
             } else {
                 endText.setText("Finished! Sorry, but you lost.");
             }
-            paneBoard.getChildren().add(endText);
+            paneBoard.getChildren().add(stack);
         }
     }
 
