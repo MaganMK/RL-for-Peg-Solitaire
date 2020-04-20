@@ -92,6 +92,18 @@ public class Board {
 
     public HashMap<String, Cell> getCells() { return cells; }
 
+    public List<Integer> getBoardRepresentation() {
+        List<Integer> representation = new ArrayList<>();
+        for (Cell c : cells.values()) {
+            if (c.hasPeg()) {
+                representation.add(1);
+            } else {
+                representation.add(0);
+            }
+        }
+        return representation;
+    }
+
     public boolean isFinished() {
         for (Cell from : cells.values()) {
             for (Cell to : cells.values()) {
@@ -123,7 +135,7 @@ public class Board {
         }
     }
 
-    private boolean isLegalMove(Cell from, Cell to) {
+    public boolean isLegalMove(Cell from, Cell to) {
         Set<Cell> intersection = intersectingNeighbours(from, to);
         if (intersection.size() == 1 && !isNeighbours(from, to) && from.hasPeg() && !to.hasPeg())
         {

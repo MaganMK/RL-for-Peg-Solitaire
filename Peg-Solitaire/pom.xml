@@ -16,9 +16,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.tensorflow</groupId>
-            <artifactId>tensorflow</artifactId>
-            <version>1.14.0</version>
+            <groupId>IT3105</groupId>
+            <artifactId>RL-Agent</artifactId>
+            <version>1</version>
         </dependency>
     </dependencies>
 

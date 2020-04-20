@@ -5,16 +5,18 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="mainMenu" prefHeight="569.0" prefWidth="768.0" style="-fx-background-color: white;" visible="true" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainMenuController">
+<AnchorPane fx:id="mainMenu" prefHeight="874.0" prefWidth="1075.0" style="-fx-background-color: white;" visible="true" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainMenuController">
     <children>
-        <Button id="button" fx:id="makeMove" layoutX="224.0" layoutY="144.0" onMouseClicked="#makeMove" prefHeight="44.0" prefWidth="64.0" text="Run" textAlignment="CENTER" />
+        <Button id="button" fx:id="run" layoutX="296.0" layoutY="84.0" onMouseClicked="#run" prefHeight="35.0" prefWidth="71.0" text="Run" textAlignment="CENTER" />
         <Label id="label" fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" prefHeight="16" prefWidth="69" />
       <Text layoutX="88.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Diamond" wrappingWidth="92.22900390625">
          <font>
@@ -26,12 +28,12 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <RadioButton layoutX="169.0" layoutY="78.0" mnemonicParsing="false" onAction="#handleGameTypeToggle" text="diamond">
+      <RadioButton layoutX="169.0" layoutY="78.0" mnemonicParsing="false" onAction="#handleGameTypeToggle" selected="true" text="diamond">
          <toggleGroup>
             <ToggleGroup fx:id="diamond_or_triangle" />
          </toggleGroup>
       </RadioButton>
-      <RadioButton layoutX="169.0" layoutY="105.0" mnemonicParsing="false" onAction="#handleGameTypeToggle" text="triangle" toggleGroup="$diamond_or_triangle" />
+      <RadioButton layoutX="169.0" layoutY="105.0" mnemonicParsing="false" onAction="#handleGameTypeToggle" selected="true" text="triangle" toggleGroup="$diamond_or_triangle" />
       <Text layoutX="88.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Size" wrappingWidth="45.9921875">
          <font>
             <Font size="18.0" />
@@ -43,34 +45,124 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <VBox fx:id="holesBox" layoutX="88.0" layoutY="225.0" prefHeight="191.0" prefWidth="46.0">
+      <VBox fx:id="holesBox" layoutX="88.0" layoutY="225.0" prefHeight="312.0" prefWidth="46.0">
          <children>
             <CheckBox mnemonicParsing="false" text="A" />
          </children>
       </VBox>
-      <Pane fx:id="boardPaneOuter" layoutX="384.0" layoutY="77.0" prefHeight="321.0" prefWidth="310.0" />
-      <Text layoutX="182.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Move" wrappingWidth="45.9921875">
+      <Pane fx:id="boardPaneOuter" layoutX="562.0" layoutY="142.0" prefHeight="578.0" prefWidth="453.0" />
+      <Text layoutX="244.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Agent" wrappingWidth="45.9921875">
          <font>
             <Font size="18.0" />
          </font>
       </Text>
-      <VBox fx:id="fromBox" layoutX="169.0" layoutY="225.0" prefHeight="191.0" prefWidth="46.0">
-         <children>
-            <RadioButton mnemonicParsing="false" text="A">
-               <toggleGroup>
-                  <ToggleGroup fx:id="fromMove" />
-               </toggleGroup>
-            </RadioButton>
-         </children>
-      </VBox>
-      <VBox fx:id="toBox" layoutX="210.0" layoutY="225.0" prefHeight="191.0" prefWidth="46.0">
-         <children>
-            <RadioButton mnemonicParsing="false" text="A">
-               <toggleGroup>
-                  <ToggleGroup fx:id="toMove" />
-               </toggleGroup>
-            </RadioButton>
-         </children>
-      </VBox>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="587.0" layoutX="167.0" layoutY="234.0" stroke="BLACK" strokeType="INSIDE" width="311.0" />
+      <Text layoutX="174.0" layoutY="321.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Actor" underline="true" wrappingWidth="71.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="179.0" layoutY="345.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Learning Rate" wrappingWidth="85.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="179.0" layoutY="405.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Discount Factor" wrappingWidth="122.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="180.0" layoutY="375.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Eligibility Decay Rate" wrappingWidth="131.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="179.0" layoutY="436.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Epsilon" wrappingWidth="122.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="179.0" layoutY="466.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Include Epsilon Decay" wrappingWidth="131.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="171.0" layoutY="522.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Critic" underline="true" wrappingWidth="71.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="175.0" layoutY="548.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Learning Rate" wrappingWidth="85.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="175.0" layoutY="610.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Discount Factor" wrappingWidth="122.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="174.0" layoutY="579.0" strokeType="OUTSIDE" strokeWidth="0.0" text="EligibilityDecayRate" wrappingWidth="131.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="176.0" layoutY="257.0" strokeType="OUTSIDE" strokeWidth="0.0" text="General" underline="true" wrappingWidth="71.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="181.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Episodes" wrappingWidth="85.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="172.0" layoutY="642.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Use value approximator (NN)" wrappingWidth="189.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField fx:id="episodes" layoutX="391.0" layoutY="261.0" prefHeight="0.0" prefWidth="46.0" text="10">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="actorLR" layoutX="391.0" layoutY="326.0" prefHeight="0.0" prefWidth="46.0" text="0.5">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="actorEDR" layoutX="391.0" layoutY="356.0" prefHeight="0.0" prefWidth="46.0" text="0.2">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="actorDF" layoutX="391.0" layoutY="386.0" prefHeight="0.0" prefWidth="46.0" text="0.9">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="epsilon" layoutX="391.0" layoutY="417.0" prefHeight="0.0" prefWidth="46.0" text="0.7">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
+      <CheckBox fx:id="includeED" layoutX="405.0" layoutY="452.0" mnemonicParsing="false" />
+      <TextField fx:id="criticLR" layoutX="391.0" layoutY="529.0" prefHeight="0.0" prefWidth="46.0" text="0.5">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="criticEDR" layoutX="391.0" layoutY="560.0" prefHeight="0.0" prefWidth="46.0" text="0.2">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
+      <TextField fx:id="criticDF" layoutX="391.0" layoutY="591.0" prefHeight="0.0" prefWidth="46.0" text="0.9">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
+      <CheckBox fx:id="useVA" layoutX="405.0" layoutY="628.0" mnemonicParsing="false" />
     </children>
 </AnchorPane>

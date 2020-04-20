@@ -1,6 +1,8 @@
 package controllers;
 
+import agents.rl.RLAgent;
 import helpers.GameType;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
@@ -35,6 +37,10 @@ public class BoardController {
         drawBoard();
     }
 
+    public Board getBoard() {
+        return board;
+    }
+
     private Circle createNode(){
         Circle circle = new Circle(RADIUS);
         circle.setStroke(Color.FORESTGREEN);
@@ -55,7 +61,7 @@ public class BoardController {
         return circle;
     }
 
-    private void drawBoard() {
+    public void drawBoard() {
         HashMap<String, Cell> cells = board.getCells();
         paneBoard.getChildren().clear();
 
@@ -93,10 +99,17 @@ public class BoardController {
     }
 
     public void makeMove(String from, String to) {
+
         if (board.makeMove(from, to)){
+            System.out.println(from+to);
             drawBoard();
         } else {
             System.out.println("Illegal move");
         }
     }
+
+    public boolean isFinished() {
+        return board.isFinished();
+    }
+
 }
