@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import static helpers.GameType.*;
 import agents.rl.RLAgent;
-import org.omg.PortableServer.THREAD_POLICY_ID;
 
 public class MainMenuController {
 
@@ -35,7 +34,7 @@ public class MainMenuController {
     private List<String> checkBoxes = new ArrayList<>();
 
     @FXML
-    public void run() throws InterruptedException{
+    public void run() {
 
         if (!includeED.isSelected() && !useVA.isSelected()) {
             agent = new RLAgent(Integer.valueOf(episodes.getText()), Double.valueOf(actorLR.getText()),
@@ -45,30 +44,24 @@ public class MainMenuController {
                     boardController.getBoard().getBoardRepresentation());
         }
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Runnable updater = new Runnable() {
-                    @Override
-                    public void run() {
-                            String action = agent.getAction();
-                            String from = action.split(":")[0];
-                            String to = action.split(":")[1];
-                            boardController.makeMove(from, to);
-                            List<Integer> board = boardController.getBoard().getBoardRepresentation();
-                            agent.updateState(board);
+        Thread thread = new Thread(() -> {
+            Runnable updater = () -> {
+                    String action = agent.getAction();
+                    String from = action.split(":")[0];
+                    String to = action.split(":")[1];
+                    boardController.makeMove(from, to);
+                    List<Integer> board = boardController.getBoard().getBoardRepresentation();
+                    agent.updateState(board);
 
-                    }
-                };
+            };
 
-                while (!boardController.isFinished()) {
-                    try {
-                        Thread.sleep(1);
-                    } catch (InterruptedException ex) {
-                    }
-                    // UI update is run on the Application thread
-                    Platform.runLater(updater);
+            while (!boardController.isFinished()) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ex) {
                 }
+                // UI update is run on the Application thread
+                Platform.runLater(updater);
             }
         });
 
