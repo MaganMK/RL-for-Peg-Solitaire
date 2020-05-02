@@ -1,6 +1,11 @@
-package controllers;
+package app.controllers;
 
-import helpers.GameType;
+import agents.interfaces.AgentInterface;
+import agents.rl.RLAgent;
+import game.controllers.BoardController;
+import game.interfaces.BoardInterface;
+import game.models.Board;
+import game.helpers.GameType;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,11 +14,14 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import models.Board;
+import javafx.scene.text.Text;
+
 import java.util.ArrayList;
 import java.util.List;
-import static helpers.GameType.*;
-import agents.rl.RLAgent;
+
+import static game.helpers.GameType.DIAMOND;
+import static game.helpers.GameType.TRIANGLE;
+
 
 public class MainMenuController {
 
@@ -22,51 +30,43 @@ public class MainMenuController {
     @FXML VBox holesBox;
     @FXML Pane boardPaneOuter;
     @FXML Button run;
-    @FXML TextField episodes, actorLR, actorEDR, actorDF, epsilon, criticLR, criticEDR, criticDF;
+    @FXML TextField episodes, actorLR, actorEDR, actorDF, epsilon, epsilonDecayRate, criticLR, criticEDR, criticDF, frameRate;
     @FXML CheckBox includeED, useVA;
+    @FXML Text resultText;
 
 
     Pane board;
-    private RLAgent agent;
-    private BoardController boardController;
+    private BoardInterface boardController;
+    private AgentInterface agent;
     private int size = 1;
     private GameType gameType;
     private List<String> checkBoxes = new ArrayList<>();
 
+
     @FXML
     public void run() {
 
-        if (!includeED.isSelected() && !useVA.isSelected()) {
-            agent = new RLAgent(Integer.valueOf(episodes.getText()), Double.valueOf(actorLR.getText()),
+        if(!useVA.isSelected()) {
+            agent = new RLAgent(boardController, Integer.valueOf(episodes.getText()), Double.valueOf(actorLR.getText()),
                     Double.valueOf(criticLR.getText()), Double.valueOf(actorEDR.getText()),
                     Double.valueOf(criticEDR.getText()), Double.valueOf(actorDF.getText()),
-                    Double.valueOf(criticDF.getText()), Double.valueOf(epsilon.getText()), 0.0,
-                    boardController.getBoard().getBoardRepresentation());
+                    Double.valueOf(criticDF.getText()), Double.valueOf(epsilon.getText()),
+                    Double.valueOf(epsilonDecayRate.getText()));
+        } else {
+            // TODO: NN critic
         }
 
-        Thread thread = new Thread(() -> {
-            Runnable updater = () -> {
-                    String action = agent.getAction();
-                    String from = action.split(":")[0];
-                    String to = action.split(":")[1];
-                    boardController.makeMove(from, to);
-                    List<Integer> board = boardController.getBoard().getBoardRepresentation();
-                    agent.updateState(board);
 
-            };
+        boolean finished = agent.train();
 
-            while (!boardController.isFinished()) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException ex) {
-                }
-                // UI update is run on the Application thread
-                Platform.runLater(updater);
-            }
-        });
+        resultText.setText("Finished training.");
 
-        thread.setDaemon(true);
-        thread.start();
+    }
+
+    @FXML
+    public void show() {
+        System.out.println(frameRate.getText());
+        agent.show(Integer.valueOf(frameRate.getText()));
     }
 
     @FXML
@@ -78,12 +78,13 @@ public class MainMenuController {
         sizeSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10));
     }
 
+
     @FXML
     public void spinnerChange() {
         int newValue = sizeSpinner.getValue();
         holesBox.getChildren().clear();
         this.size = newValue;
-        int totalCells = gameType == GameType.DIAMOND ? size*size : (size*size + size) / 2;
+        int totalCells = gameType == DIAMOND ? size*size : (size*size + size) / 2;
         for (int i = 0; i<totalCells; i++){
             String name = Board.NAMES.get(i);
 
@@ -108,12 +109,14 @@ public class MainMenuController {
         renderBoard();
     }
 
+
     public void handleGameTypeToggle() {
         RadioButton selectedToggle = (RadioButton) diamond_or_triangle.getSelectedToggle();
         String selectedToggleText = selectedToggle.getText();
         this.gameType = selectedToggleText.equals("diamond")? DIAMOND : TRIANGLE;
         spinnerChange();
     }
+
 
     public void renderBoard() {
         try{
@@ -126,4 +129,6 @@ public class MainMenuController {
             e.printStackTrace();
         }
     }
+
 }
+

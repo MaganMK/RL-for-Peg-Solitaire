@@ -1,4 +1,4 @@
-package agents.rl;
+package agents.rl.helpers;
 
 public class Action {
 

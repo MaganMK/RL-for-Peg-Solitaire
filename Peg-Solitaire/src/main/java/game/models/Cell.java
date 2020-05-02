@@ -1,6 +1,6 @@
-package models;
+package game.models;
 
-import helpers.Tuple;
+import game.helpers.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 

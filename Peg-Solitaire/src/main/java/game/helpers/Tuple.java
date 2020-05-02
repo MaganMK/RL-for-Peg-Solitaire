@@ -1,4 +1,4 @@
-package helpers;
+package game.helpers;
 
 public class Tuple<X, Y>{
     public final int x;

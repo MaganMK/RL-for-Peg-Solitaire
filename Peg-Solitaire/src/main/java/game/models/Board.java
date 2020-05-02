@@ -1,9 +1,9 @@
-package models;
+package game.models;
 
-import helpers.GameType;
+import game.helpers.GameType;
+import game.interfaces.BoardInterface;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Board {
 
@@ -94,8 +94,8 @@ public class Board {
 
     public List<Integer> getBoardRepresentation() {
         List<Integer> representation = new ArrayList<>();
-        for (Cell c : cells.values()) {
-            if (c.hasPeg()) {
+        for (int i = 0; i<cells.keySet().size(); i++) {
+            if (getCellFromName(NAMES.get(i)).hasPeg()) {
                 representation.add(1);
             } else {
                 representation.add(0);
@@ -119,29 +119,65 @@ public class Board {
         return isFinished() && cells.values().stream().filter(Cell::hasPeg).count() == 1;
     }
 
-    public boolean makeMove(String from, String to) {
+    public int makeMove(String from, String to) {
         Cell fromCell = getCellFromName(from);
         Cell toCell = getCellFromName(to);
 
-        if (! isLegalMove(fromCell, toCell)){
-            return false;
+        if (!isLegalMove(fromCell, toCell)){
+            return -100;
         }
         else {
             fromCell.setPeg(false);
             toCell.setPeg(true);
             Cell intersection = intersectingNeighbours(fromCell, toCell).iterator().next();
             intersection.setPeg(false);
-            return true;
+            if(isFinished() && isWon()) {
+                return 1000;
+            } else if (isFinished()) {
+                return -500;
+            }
+            return 0;
         }
     }
 
-    public boolean isLegalMove(Cell from, Cell to) {
+    public int getPegsLeft() {
+        return (int) cells.values().stream().filter(Cell::hasPeg).count();
+    }
+
+    private boolean isLegalMove(Cell from, Cell to) {
         Set<Cell> intersection = intersectingNeighbours(from, to);
         if (intersection.size() == 1 && !isNeighbours(from, to) && from.hasPeg() && !to.hasPeg())
         {
             return intersection.iterator().next().hasPeg();
         }
         return false;
+    }
+
+    private List<String> allMoves() {
+        List<String> moves = new ArrayList<>();
+        int searchSpaceSize = cells.keySet().size();
+        for (int i = 0; i<searchSpaceSize; i++) {
+            for (int j = 0; j<searchSpaceSize; j++) {
+                String from = NAMES.get(i);
+                String to = NAMES.get(j);
+                moves.add(from + " " + to);
+            }
+        }
+        return moves;
+    }
+
+    public List<String> getLegalMoves() {
+        List<String> allMoves = allMoves();
+        List<String> legalMoves = new ArrayList<>();
+        for (String move : allMoves) {
+            Cell from = getCellFromName(move.split(" ")[0]);
+            Cell to = getCellFromName(move.split(" ")[1]);
+            if(isLegalMove(from, to)) {
+                legalMoves.add(move);
+            }
+        }
+
+        return legalMoves;
     }
 
 }

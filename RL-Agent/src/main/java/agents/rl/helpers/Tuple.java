@@ -1,8 +1,5 @@
 package agents.rl.helpers;
 
-import agents.rl.Action;
-import agents.rl.State;
-
 public class Tuple<X, Y>{
     public final State x;
     public final Action y;

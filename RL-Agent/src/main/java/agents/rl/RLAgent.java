@@ -5,50 +5,130 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class RLAgent {
+import agents.interfaces.AgentInterface;
+import agents.rl.helpers.Action;
+import agents.rl.helpers.State;
+import game.helpers.GameType;
+import game.interfaces.BoardInterface;
+import javafx.application.Platform;
 
-    public static final List<String> NAMES = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"));
-    public static final int minReward= -100;
-    public static final int maxReward= 100;
+public class RLAgent implements AgentInterface {
 
-    private int episodes;
+    static final int looseReward= -50;
+    static final int winReward= 100;
+
     private Actor actor;
     private Critic critic;
-    private State state;
+    private int episodes;
+
+    BoardInterface game;
+
+    private State currentState;
+    private State lastState;
+    private Action currentAction;
+    private Action lastAction;
+    double epsilon;
+    double epsilonDecay;
 
     private HashMap<List<Integer>, State> allStates = new HashMap<>();
 
 
-    public RLAgent(int episodes, double actorLearningRate, double criticLearningRate, double actorEligibilityDecayRate,
-                 double criticEligibilityDecayRate, double actorDiscountFactor, double criticDiscountFactor,
-                 double epsilon, double epsilonDecayRate, List<Integer> initialState) {
+    public RLAgent(BoardInterface game, int episodes, double actorLearningRate, double criticLearningRate,
+                   double actorEligibilityDecayRate, double criticEligibilityDecayRate, double actorDiscountFactor,
+                   double criticDiscountFactor, double epsilon, double epsilonDecayRate) {
+
+        this.game = game;
         this.episodes = episodes;
-        this.state = new State(initialState);
+        this.epsilon = epsilon;
+        this.epsilonDecay = epsilonDecayRate;
+
         this.actor = new Actor(this, actorLearningRate, actorEligibilityDecayRate,
-                actorDiscountFactor, epsilon, epsilonDecayRate, state);
-        this.critic = new Critic(criticLearningRate, criticEligibilityDecayRate, criticDiscountFactor, state);
+                actorDiscountFactor);
+        this.critic = new CriticValueMap(this, criticLearningRate, criticEligibilityDecayRate, criticDiscountFactor);
+        updateState(game.getState());
+        this.currentAction = actor.getAction(currentState);
+
     }
 
-    public HashMap<List<Integer>, State> getAllStates() {
+    HashMap<List<Integer>, State> getAllStates() {
         return allStates;
     }
 
-    public void updateState(List<Integer> state) {
+    private void updateState(List<Integer> state) {
         if (allStates.keySet().contains(state)) {
-            this.state = allStates.get(state);
-            actor.updateCurrentState(this.state);
-            critic.updateCurrentState(this.state);
+            currentState = allStates.get(state);
         } else {
-            State s = new State(state);
-            this.state = s;
-            actor.updateCurrentState(this.state);
-            critic.updateCurrentState(this.state);
-            allStates.put(state, s);
+            currentState = new State(state);
+            actor.populateState(currentState);
+            critic.populateState(currentState);
+            allStates.put(state, currentState);
         }
     }
 
-    public String getAction() {
-        Action action = actor.makeAction();
-        return action.getFrom() + ":" + action.getTo();
+
+    private void oneRound() {
+
+        int reward = game.makeMove(currentAction.getFrom(), currentAction.getTo());
+
+        lastState = currentState;
+        lastAction = currentAction;
+        updateState(game.getState());
+
+        double rdError = critic.getRDError(lastState, lastAction, reward, currentState, currentAction);
+        actor.setEligibility(lastState, lastAction);
+        critic.setEligibility(lastState);
+        critic.update();
+        actor.update(rdError);
+
+        if(!game.isFinished()) {
+            currentAction = actor.getAction(currentState);
+        }
     }
+
+    private void newGame() {
+        game.reGenerateBoard();
+        updateState(game.getState());
+        actor.reset();
+        critic.reset();
+    }
+
+    @Override
+    public boolean train() {
+        game.setShowBoard(false);
+        newGame();
+
+        for (int i=0; i<episodes; i++) {
+            while (!game.isFinished()) {
+                // UI update is run on the Application thread
+                oneRound();
+            }
+            System.out.println(i + " : " + game.pegsLeft());
+            epsilon = epsilon*epsilonDecay;
+            newGame();
+        }
+
+        return true;
+    }
+
+    @Override
+    public void show(int milliseconds) {
+        epsilon = 0;
+        newGame();
+        game.setShowBoard(true);
+        Thread thread = new Thread(() -> {
+            Runnable playGame = this::oneRound;
+            while (!game.isFinished()) {
+                    // UI update is run on the Application thread
+                Platform.runLater(playGame);
+                try {
+                    Thread.sleep(milliseconds);
+                } catch (InterruptedException ex) { }
+            }
+        });
+
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+
 }

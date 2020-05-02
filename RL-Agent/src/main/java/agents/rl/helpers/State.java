@@ -1,4 +1,4 @@
-package agents.rl;
+package agents.rl.helpers;
 
 import java.util.List;
 

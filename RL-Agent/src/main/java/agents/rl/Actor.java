@@ -1,6 +1,8 @@
 package agents.rl;
 
+import agents.rl.helpers.Action;
 import agents.rl.helpers.Methods;
+import agents.rl.helpers.State;
 import agents.rl.helpers.Tuple;
 
 import java.util.ArrayList;
@@ -8,96 +10,126 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 public class Actor {
 
     private double learningRate,
             eligibilityDecayRate,
-            discountFactor,
-            epsilon,
-            epsilonDecayRate;
+            discountFactor;
 
     private RLAgent agent;
-    private State currentState, nextState;
-    private HashMap<Tuple<State, Action>, Integer> policyMap = new HashMap<>();
-    private HashMap<Tuple<State, Action>, Integer> elibiletyMap = new HashMap<>();
-    private int searchSpaceSize;
-    private List<Action> allActions;
+    private HashMap<Tuple<State, Action>, Double> policyMap = new HashMap<>();
+    private HashMap<Tuple<State, Action>, Double> eligibilityMap = new HashMap<>();
     private List<Tuple<State, Action>> saps = new ArrayList<>();
 
-    public Actor(RLAgent agent, double learningRate, double eligibilityDecayRate, double discountFactor, double epsilon,
-                 double epsilonDecayRate, State initialState) {
+    public Actor(RLAgent agent, double learningRate, double eligibilityDecayRate, double discountFactor) {
 
         this.agent = agent;
         this.learningRate = learningRate;
         this.eligibilityDecayRate = eligibilityDecayRate;
         this.discountFactor = discountFactor;
-        this.epsilon = epsilon;
-        this.epsilonDecayRate = epsilonDecayRate;
-        searchSpaceSize = initialState.getState().size();
-        allActions = allActions();
-        updateCurrentState(initialState);
     }
 
-    public void updateCurrentState(State state) {
-        this.currentState = state;
-        if (!agent.getAllStates().values().contains(currentState)) {
-            populateSaps(currentState);
-            populateValueMap(currentState);
-            populateEligibilityMap(currentState);
+    void populateState(State state) {
+        if (!agent.getAllStates().values().contains(state)) {
+            populateSaps(state);
+            populatePolicyMap(state);
+            populateEligibilityMap(state);
         }
     }
 
-    private List<Action> allActions() {
+    private List<Action> getLegalActions() {
         List<Action> moves = new ArrayList<>();
-        for (int i = 0; i<searchSpaceSize; i++) {
-            for (int j = 0; j<searchSpaceSize; j++) {
-                String from = RLAgent.NAMES.get(i);
-                String to = RLAgent.NAMES.get(j);
-                moves.add(new Action(from, to));
-            }
+        for (String legalMove : agent.game.getLegalMoves()) {
+            String from = legalMove.split(" ")[0];
+            String to = legalMove.split(" ")[1];
+            moves.add(new Action(from, to));
         }
         return moves;
     }
 
     private void populateSaps(State state) {
-        for (Action action : allActions) {
+        for (Action action : getLegalActions()) {
             Tuple<State, Action> sap = new Tuple<>(state, action);
             saps.add(sap);
         }
     }
 
-    private void populateValueMap(State state) {
+    private void populatePolicyMap(State state) {
         for (Tuple<State, Action> sap : saps) {
-            if (sap.x == state) {
-                int value = ThreadLocalRandom.current().nextInt(RLAgent.minReward/10, RLAgent.maxReward/10 + 1);
-                policyMap.put(sap, value);
+            if (sap.x.equals(state)) {
+                policyMap.put(sap, 0.0);
             }
         }
     }
 
     private void populateEligibilityMap(State state) {
         for (Tuple<State, Action> sap : saps) {
-            if (sap.x == state) {
-                elibiletyMap.put(sap, 0);
+            if (sap.x.equals(state)) {
+                eligibilityMap.put(sap, 0.0);
             }
         }
     }
 
-    public Action makeAction() {
-        double prob = ThreadLocalRandom.current().nextDouble(0, 1);
-        HashMap<Integer, Action> possibleActions = new HashMap<>();
+    Action getAction(State state) {
+        HashMap<Action, Double> possibleActions = new HashMap<>();
         for (Tuple<State, Action> sap : saps) {
-            if (sap.x.toString().equals(currentState.toString())) {
-                possibleActions.put(policyMap.get(sap), sap.y);
+            if (sap.x.equals(state)) {
+                possibleActions.put(sap.y, policyMap.get(sap));
             }
         }
 
-        int key = prob <= epsilon ? Collections.max(possibleActions.keySet())
-                : Methods.getRandomElement(possibleActions.keySet());
-        return possibleActions.get(key);
+        double prob = ThreadLocalRandom.current().nextDouble(0, 1);
+        if(prob >= agent.epsilon) {
+            Action currentBest = possibleActions.keySet().iterator().next();
+            for (Action candidate : possibleActions.keySet()) {
+                if (possibleActions.get(candidate) > possibleActions.get(currentBest)) {
+                    currentBest = candidate;
+                }
+            }
+            return  currentBest;
+        }
+
+        return Methods.getRandomElement(possibleActions.keySet());
     }
 
+    void reset() {
+        resetEligibilityMap();
+    }
+
+    private void resetEligibilityMap() {
+        for (Tuple<State, Action> sap : eligibilityMap.keySet()) {
+            eligibilityMap.put(sap, 0.0);
+        }
+    }
+
+    void setEligibility(State state, Action action) {
+        for (Tuple<State, Action> sap : saps) {
+            if (sap.x.equals(state) && sap.y.equals(action)) {
+                eligibilityMap.put(sap, 1.0);
+            }
+        }
+    }
+
+    void update(double rdError) {
+        updatePolicyMap(rdError);
+        updateEligibilityMap();
+    }
+
+    private void updatePolicyMap(double rdError) {
+        for (Tuple<State, Action> sap : saps) {
+            double value = policyMap.get(sap) + learningRate*rdError*eligibilityMap.get(sap);
+            policyMap.put(sap, value);
+        }
+
+    }
+
+    private void updateEligibilityMap() {
+        for (Tuple<State, Action> sap : saps) {
+            double value = discountFactor*eligibilityDecayRate*eligibilityMap.get(sap);
+            eligibilityMap.put(sap, value);
+        }
+
+    }
 
 }
