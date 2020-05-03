@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class CriticValueMap extends Critic{
 
     private HashMap<State, Double> valueMap = new HashMap<>();
+    HashMap<State, Double> eligibilityMap = new HashMap<>();
 
 
     public CriticValueMap(RLAgent agent, double learningRate, double eligibilityDecayRate, double discountFactor) {
@@ -19,7 +20,7 @@ public class CriticValueMap extends Critic{
     void populateState(State state) {
         if(!valueMap.keySet().contains(state)) {
             populateValueMap(state);
-            populateEligibilityMap(state);
+            setEligibilityMap(state);
         }
     }
 
@@ -30,16 +31,29 @@ public class CriticValueMap extends Critic{
 
 
     @Override
-    double getRDError(State lastState, Action lastAction, int reward, State currentState, Action currentAction) {
+    double getRDError(State lastState, int reward, State currentState) {
         currentRDError = reward + discountFactor*valueMap.get(currentState) - valueMap.get(lastState);
         return currentRDError;
     }
 
     @Override
     void update() {
+        setEligibilityMap(agent.lastState);
         updateValueMap();
         updateEligibilityMap();
     }
+
+    @Override
+    void resetEligibilityMap() {
+        for (State state : eligibilityMap.keySet()) {
+            eligibilityMap.put(state, 0.0);
+        }
+    }
+
+    private void setEligibilityMap(State state) {
+        eligibilityMap.put(state, 1.0);
+    }
+
 
     private void updateValueMap() {
         for (State state : agent.getAllStates().values()) {

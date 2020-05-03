@@ -20,11 +20,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.tensorflow</groupId>
-            <artifactId>tensorflow</artifactId>
-            <version>1.14.0</version>
-        </dependency>
-        <dependency>
             <groupId>IT3105</groupId>
             <artifactId>Peg-Solitaire</artifactId>
             <version>1</version>

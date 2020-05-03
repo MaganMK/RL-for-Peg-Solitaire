@@ -17,7 +17,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static game.helpers.GameType.DIAMOND;
 import static game.helpers.GameType.TRIANGLE;
@@ -30,7 +32,7 @@ public class MainMenuController {
     @FXML VBox holesBox;
     @FXML Pane boardPaneOuter;
     @FXML Button run;
-    @FXML TextField episodes, actorLR, actorEDR, actorDF, epsilon, epsilonDecayRate, criticLR, criticEDR, criticDF, frameRate;
+    @FXML TextField episodes, actorLR, actorEDR, actorDF, epsilon, epsilonDecayRate, criticLR, criticEDR, criticDF, frameRate, nnText;
     @FXML CheckBox includeED, useVA;
     @FXML Text resultText;
 
@@ -51,9 +53,14 @@ public class MainMenuController {
                     Double.valueOf(criticLR.getText()), Double.valueOf(actorEDR.getText()),
                     Double.valueOf(criticEDR.getText()), Double.valueOf(actorDF.getText()),
                     Double.valueOf(criticDF.getText()), Double.valueOf(epsilon.getText()),
-                    Double.valueOf(epsilonDecayRate.getText()));
+                    Double.valueOf(epsilonDecayRate.getText()), new ArrayList<>());
         } else {
-            // TODO: NN critic
+            List<Integer> layers = Arrays.stream(nnText.getText().split(",")).map(Integer::valueOf).collect(Collectors.toList());
+            agent = new RLAgent(boardController, Integer.valueOf(episodes.getText()), Double.valueOf(actorLR.getText()),
+                    Double.valueOf(criticLR.getText()), Double.valueOf(actorEDR.getText()),
+                    Double.valueOf(criticEDR.getText()), Double.valueOf(actorDF.getText()),
+                    Double.valueOf(criticDF.getText()), Double.valueOf(epsilon.getText()),
+                    Double.valueOf(epsilonDecayRate.getText()), layers);
         }
 
 

@@ -8,7 +8,6 @@ import java.util.HashMap;
 public abstract class Critic {
 
     double learningRate, eligibilityDecayRate, discountFactor;
-    HashMap<State, Double> eligibilityMap = new HashMap<>();
     RLAgent agent;
     double currentRDError;
 
@@ -20,26 +19,11 @@ public abstract class Critic {
     }
 
     abstract void populateState(State state);
-
-    abstract double getRDError(State lastState, Action lastAction, int reward, State currentState, Action currentAction);
+    abstract double getRDError(State lastState, int reward, State currentState);
     abstract void update();
+    abstract void resetEligibilityMap();
 
     void reset() {
         resetEligibilityMap();
-    }
-
-    void populateEligibilityMap(State state) {
-        eligibilityMap.put(state, 1.0);
-    }
-
-    private void resetEligibilityMap() {
-        for (State state : eligibilityMap.keySet()) {
-            eligibilityMap.put(state, 0.0);
-        }
-    }
-
-
-    void setEligibility(State state) {
-        eligibilityMap.put(state, 1.0);
     }
 }

@@ -23,10 +23,10 @@ public class RLAgent implements AgentInterface {
 
     BoardInterface game;
 
-    private State currentState;
-    private State lastState;
-    private Action currentAction;
-    private Action lastAction;
+    State currentState;
+    State lastState;
+    Action currentAction;
+    Action lastAction;
     double epsilon;
     double epsilonDecay;
 
@@ -35,7 +35,7 @@ public class RLAgent implements AgentInterface {
 
     public RLAgent(BoardInterface game, int episodes, double actorLearningRate, double criticLearningRate,
                    double actorEligibilityDecayRate, double criticEligibilityDecayRate, double actorDiscountFactor,
-                   double criticDiscountFactor, double epsilon, double epsilonDecayRate) {
+                   double criticDiscountFactor, double epsilon, double epsilonDecayRate, List<Integer> nn) {
 
         this.game = game;
         this.episodes = episodes;
@@ -44,11 +44,19 @@ public class RLAgent implements AgentInterface {
 
         this.actor = new Actor(this, actorLearningRate, actorEligibilityDecayRate,
                 actorDiscountFactor);
-        this.critic = new CriticValueMap(this, criticLearningRate, criticEligibilityDecayRate, criticDiscountFactor);
+
+        if(nn.isEmpty()) {
+            this.critic = new CriticValueMap(this, criticLearningRate, criticEligibilityDecayRate, criticDiscountFactor);
+
+        } else {
+            this.critic = new CriticNN(this, criticLearningRate, criticEligibilityDecayRate, criticDiscountFactor, nn);
+        }
+
         updateState(game.getState());
         this.currentAction = actor.getAction(currentState);
 
     }
+
 
     HashMap<List<Integer>, State> getAllStates() {
         return allStates;
@@ -74,9 +82,10 @@ public class RLAgent implements AgentInterface {
         lastAction = currentAction;
         updateState(game.getState());
 
-        double rdError = critic.getRDError(lastState, lastAction, reward, currentState, currentAction);
+        double rdError = critic.getRDError(lastState, reward, currentState);
+
         actor.setEligibility(lastState, lastAction);
-        critic.setEligibility(lastState);
+
         critic.update();
         actor.update(rdError);
 

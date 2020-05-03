@@ -124,7 +124,7 @@ public class Board {
         Cell toCell = getCellFromName(to);
 
         if (!isLegalMove(fromCell, toCell)){
-            return -100;
+            return 0;
         }
         else {
             fromCell.setPeg(false);
@@ -132,9 +132,9 @@ public class Board {
             Cell intersection = intersectingNeighbours(fromCell, toCell).iterator().next();
             intersection.setPeg(false);
             if(isFinished() && isWon()) {
-                return 1000;
+                return 100;
             } else if (isFinished()) {
-                return -500;
+                return -50;
             }
             return 0;
         }
