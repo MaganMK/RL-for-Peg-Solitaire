@@ -3,5 +3,4 @@
 <?import javafx.scene.layout.Pane?>
 
 
-<Pane fx:id="paneBoard" prefHeight="356.0" prefWidth="316.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.controllers.BoardController" />
-
+<Pane fx:id="paneBoard" prefHeight="579.0" prefWidth="553.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.controllers.BoardController" />

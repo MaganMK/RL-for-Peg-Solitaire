@@ -19,6 +19,10 @@ import java.util.List;
 
 public class BoardController implements BoardInterface {
 
+
+    public static int WINREWARD = 100;
+    public static int LOOSEREWARD = -50;
+    public static int STEPREWARD = 0;
     private final static int RADIUS = 10;
     private Board board;
     private GameType gameType;

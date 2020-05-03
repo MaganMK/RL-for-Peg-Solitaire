@@ -121,7 +121,6 @@ public class Actor {
             double value = policyMap.get(sap) + learningRate*rdError*eligibilityMap.get(sap);
             policyMap.put(sap, value);
         }
-
     }
 
     private void updateEligibilityMap() {

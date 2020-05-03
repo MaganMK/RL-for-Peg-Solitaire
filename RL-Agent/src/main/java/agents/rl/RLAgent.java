@@ -11,6 +11,7 @@ import agents.rl.helpers.State;
 import game.helpers.GameType;
 import game.interfaces.BoardInterface;
 import javafx.application.Platform;
+import org.jfree.ui.RefineryUtilities;
 
 public class RLAgent implements AgentInterface {
 
@@ -73,6 +74,16 @@ public class RLAgent implements AgentInterface {
         }
     }
 
+    private void bestEffort() {
+        game.makeMove(currentAction.getFrom(), currentAction.getTo());
+        lastState = currentState;
+        lastAction = currentAction;
+        updateState(game.getState());
+        if(!game.isFinished()) {
+            currentAction = actor.getAction(currentState);
+        }
+    }
+
 
     private void oneRound() {
 
@@ -82,12 +93,14 @@ public class RLAgent implements AgentInterface {
         lastAction = currentAction;
         updateState(game.getState());
 
+
         double rdError = critic.getRDError(lastState, reward, currentState);
 
         actor.setEligibility(lastState, lastAction);
 
         critic.update();
         actor.update(rdError);
+
 
         if(!game.isFinished()) {
             currentAction = actor.getAction(currentState);
@@ -106,16 +119,28 @@ public class RLAgent implements AgentInterface {
         game.setShowBoard(false);
         newGame();
 
+        Chart chart = new Chart("Training plot");
+
         for (int i=0; i<episodes; i++) {
             while (!game.isFinished()) {
                 // UI update is run on the Application thread
                 oneRound();
             }
             System.out.println(i + " : " + game.pegsLeft());
-            epsilon = epsilon*epsilonDecay;
+            chart.addPegsLeft(i, game.pegsLeft());
+            chart.addEpsilon(i, epsilon);
+            if(epsilon-epsilonDecay >= 0){
+                epsilon -= epsilonDecay;
+            } else {
+                epsilon = 0;
+            }
             newGame();
         }
 
+        chart.makeChart();
+        chart.pack();
+        RefineryUtilities.centerFrameOnScreen(chart);
+        chart.setVisible(true);
         return true;
     }
 
@@ -125,7 +150,7 @@ public class RLAgent implements AgentInterface {
         newGame();
         game.setShowBoard(true);
         Thread thread = new Thread(() -> {
-            Runnable playGame = this::oneRound;
+            Runnable playGame = this::bestEffort;
             while (!game.isFinished()) {
                     // UI update is run on the Application thread
                 Platform.runLater(playGame);

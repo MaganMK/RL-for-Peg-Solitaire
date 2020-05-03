@@ -1,5 +1,6 @@
 package game.models;
 
+import game.controllers.BoardController;
 import game.helpers.GameType;
 import game.interfaces.BoardInterface;
 
@@ -7,7 +8,10 @@ import java.util.*;
 
 public class Board {
 
-    public static final List<String> NAMES = new ArrayList<>(Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"));
+    public static final List<String> NAMES = new ArrayList<>(Arrays.asList("A", "B", "C", "D",
+            "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
+            "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+            "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"));
     private int posOffset = 100;
     private int posInterval = 50;
     private HashMap<String, Cell> cells;
@@ -132,11 +136,11 @@ public class Board {
             Cell intersection = intersectingNeighbours(fromCell, toCell).iterator().next();
             intersection.setPeg(false);
             if(isFinished() && isWon()) {
-                return 100;
+                return BoardController.WINREWARD;
             } else if (isFinished()) {
-                return -50;
+                return BoardController.LOOSEREWARD;
             }
-            return 0;
+            return BoardController.STEPREWARD;
         }
     }
 

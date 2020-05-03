@@ -34,7 +34,6 @@ public class MainMenuController {
     @FXML Button run;
     @FXML TextField episodes, actorLR, actorEDR, actorDF, epsilon, epsilonDecayRate, criticLR, criticEDR, criticDF, frameRate, nnText;
     @FXML CheckBox includeED, useVA;
-    @FXML Text resultText;
 
 
     Pane board;
@@ -65,8 +64,6 @@ public class MainMenuController {
 
 
         boolean finished = agent.train();
-
-        resultText.setText("Finished training.");
 
     }
 
