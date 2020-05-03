@@ -14,5 +14,4 @@ public interface BoardInterface {
     int pegsLeft();
     List<Integer> getState();
     void setShowBoard(boolean show);
-
 }

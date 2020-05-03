@@ -45,7 +45,7 @@ public class MainMenuController {
 
 
     @FXML
-    public void run() {
+    public void train() {
 
         if(!useVA.isSelected()) {
             agent = new RLAgent(boardController, Integer.valueOf(episodes.getText()), Double.valueOf(actorLR.getText()),

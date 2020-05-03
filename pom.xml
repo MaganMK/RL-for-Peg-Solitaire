@@ -8,7 +8,7 @@
   <modules>
     <module>Peg-Solitaire</module>
     <module>RL-Agent</module>
-    <module>UX-Module</module>
+    <module>UI</module>
   </modules>
 
 </project>

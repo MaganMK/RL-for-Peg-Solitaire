@@ -121,7 +121,7 @@
             <Font size="14.0" />
          </font>
       </Text>
-      <TextField fx:id="episodes" layoutX="391.0" layoutY="261.0" prefHeight="28.0" prefWidth="63.0" text="1000">
+      <TextField fx:id="episodes" layoutX="391.0" layoutY="261.0" prefHeight="28.0" prefWidth="63.0" text="1200">
          <font>
             <Font size="14.0" />
          </font>
@@ -162,7 +162,7 @@
          </font>
       </TextField>
       <CheckBox fx:id="useVA" layoutX="405.0" layoutY="628.0" mnemonicParsing="false" />
-      <TextField fx:id="epsilonDecayRate" layoutX="391.0" layoutY="447.0" prefHeight="28.0" prefWidth="63.0" text="0.0012">
+      <TextField fx:id="epsilonDecayRate" layoutX="391.0" layoutY="447.0" prefHeight="28.0" prefWidth="63.0" text="0.0010">
          <font>
             <Font size="14.0" />
          </font>
@@ -173,7 +173,7 @@
             <Font size="14.0" />
          </font>
       </TextField>
-        <Button id="button" fx:id="run" layoutX="391.0" layoutY="765.0" onMouseClicked="#run" prefHeight="35.0" prefWidth="71.0" text="Train" textAlignment="CENTER" />
+        <Button id="button" fx:id="run" layoutX="391.0" layoutY="765.0" onMouseClicked="#train" prefHeight="35.0" prefWidth="71.0" text="Train" textAlignment="CENTER" />
       <Text layoutX="297.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Frame Rate" wrappingWidth="70.99999999999994">
          <font>
             <Font size="14.0" />

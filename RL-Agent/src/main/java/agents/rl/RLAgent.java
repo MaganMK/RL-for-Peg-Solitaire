@@ -1,29 +1,23 @@
 package agents.rl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import agents.interfaces.AgentInterface;
 import agents.rl.helpers.Action;
+import agents.rl.helpers.Chart;
 import agents.rl.helpers.State;
-import game.helpers.GameType;
 import game.interfaces.BoardInterface;
 import javafx.application.Platform;
 import org.jfree.ui.RefineryUtilities;
 
 public class RLAgent implements AgentInterface {
 
-    static final int looseReward= -50;
-    static final int winReward= 100;
-
     private Actor actor;
     private Critic critic;
     private int episodes;
 
     BoardInterface game;
-
     State currentState;
     State lastState;
     Action currentAction;
@@ -85,7 +79,7 @@ public class RLAgent implements AgentInterface {
     }
 
 
-    private void oneRound() {
+    private void makeMove() {
 
         int reward = game.makeMove(currentAction.getFrom(), currentAction.getTo());
 
@@ -123,8 +117,7 @@ public class RLAgent implements AgentInterface {
 
         for (int i=0; i<episodes; i++) {
             while (!game.isFinished()) {
-                // UI update is run on the Application thread
-                oneRound();
+                makeMove();
             }
             System.out.println(i + " : " + game.pegsLeft());
             chart.addPegsLeft(i, game.pegsLeft());
@@ -152,7 +145,7 @@ public class RLAgent implements AgentInterface {
         Thread thread = new Thread(() -> {
             Runnable playGame = this::bestEffort;
             while (!game.isFinished()) {
-                    // UI update is run on the Application thread
+                // UI update is run on the Application thread
                 Platform.runLater(playGame);
                 try {
                     Thread.sleep(milliseconds);
