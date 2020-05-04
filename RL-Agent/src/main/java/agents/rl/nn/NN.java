@@ -92,7 +92,7 @@ public class NN {
                 double derivative = edge.from.output*backwardValue;
 
                 double oldEligibility = edge.eligibility;
-                edge.setEligibility((oldEligibility + derivative)*eligibilityDecay);
+                edge.setEligibility(oldEligibility + derivative*eligibilityDecay);
                 double oldWeight = edge.weight;
                 edge.setWeight(oldWeight + learningRate*rdError*edge.eligibility);
             }
@@ -111,7 +111,7 @@ public class NN {
                 double derivative = edge.from.output*backwardValue;
 
                 double oldEligibility = edge.eligibility;
-                edge.setEligibility((oldEligibility + derivative)*eligibilityDecay);
+                edge.setEligibility(oldEligibility + derivative*eligibilityDecay);
                 double oldWeight = edge.weight;
                 edge.setWeight(oldWeight + learningRate*rdError*edge.eligibility);
             }
