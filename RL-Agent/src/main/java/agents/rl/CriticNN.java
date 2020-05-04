@@ -37,6 +37,6 @@ public class CriticNN extends Critic{
 
     @Override
     void update() {
-        model.backwardPropagate(currentRDError);
+        model.backwardPropagate(currentRDError, eligibilityDecayRate);
     }
 }

@@ -62,7 +62,6 @@ public class NN {
         }
     }
 
-
     public double forwardPropagate(List<Integer> input) {
         for (int i=0; i<input.size(); i++) {
             inputLayer.nodes.get(i).output = Double.valueOf(input.get(i));
@@ -77,15 +76,15 @@ public class NN {
         return outputNode.output;
     }
 
-    public void backwardPropagate(double rdError) {
-        backPropOutPutLayer(outputLayer, rdError);
+    public void backwardPropagate(double rdError, double eligibilityDecay) {
+        backPropOutPutLayer(outputLayer, rdError, eligibilityDecay);
         for (Layer hiddenLayer : hiddenLayers) {
-            backPropHiddenLayer(hiddenLayer, rdError);
+            backPropHiddenLayer(hiddenLayer, rdError, eligibilityDecay);
         }
 
     }
 
-    private void backPropOutPutLayer(Layer outputLayer, double rdError) {
+    private void backPropOutPutLayer(Layer outputLayer, double rdError, double eligibilityDecay) {
         for (Node node : outputLayer.nodes) {
             for (Edge edge : node.inputEdges) {
                 double backwardValue = linearDerived(node.getInputWeightedSum());
@@ -93,14 +92,14 @@ public class NN {
                 double derivative = edge.from.output*backwardValue;
 
                 double oldEligibility = edge.eligibility;
-                edge.setEligibility(oldEligibility + derivative);
+                edge.setEligibility((oldEligibility + derivative)*eligibilityDecay);
                 double oldWeight = edge.weight;
                 edge.setWeight(oldWeight + learningRate*rdError*edge.eligibility);
             }
         }
     }
 
-    private void backPropHiddenLayer(Layer layer, double rdError) {
+    private void backPropHiddenLayer(Layer layer, double rdError, double eligibilityDecay) {
         for (Node node : layer.nodes) {
             for (Edge edge : node.inputEdges) {
                 double sum = 0;
@@ -112,7 +111,7 @@ public class NN {
                 double derivative = edge.from.output*backwardValue;
 
                 double oldEligibility = edge.eligibility;
-                edge.setEligibility(oldEligibility + derivative);
+                edge.setEligibility((oldEligibility + derivative)*eligibilityDecay);
                 double oldWeight = edge.weight;
                 edge.setWeight(oldWeight + learningRate*rdError*edge.eligibility);
             }

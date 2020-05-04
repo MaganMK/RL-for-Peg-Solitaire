@@ -146,12 +146,12 @@
             <Font size="14.0" />
          </font>
       </TextField>
-      <TextField fx:id="criticLR" layoutX="391.0" layoutY="529.0" prefHeight="28.0" prefWidth="63.0" text="0.7">
+      <TextField fx:id="criticLR" layoutX="391.0" layoutY="529.0" prefHeight="28.0" prefWidth="63.0" text="0.4">
          <font>
             <Font size="14.0" />
          </font>
       </TextField>
-      <TextField fx:id="criticEDR" layoutX="391.0" layoutY="560.0" prefHeight="28.0" prefWidth="63.0" text="0.99">
+      <TextField fx:id="criticEDR" layoutX="391.0" layoutY="560.0" prefHeight="28.0" prefWidth="63.0" text="0.9">
          <font>
             <Font size="14.0" />
          </font>
