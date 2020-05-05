@@ -29,7 +29,6 @@ public class CriticValueMap extends Critic{
         valueMap.put(state, value);
     }
 
-
     @Override
     double getRDError(State lastState, int reward, State currentState) {
         currentRDError = reward + discountFactor*valueMap.get(currentState) - valueMap.get(lastState);
